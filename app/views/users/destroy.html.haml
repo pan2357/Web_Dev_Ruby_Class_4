@@ -1,0 +1,12 @@
+%h1 Destroy page!
+%p
+	= 'name : '
+	= @user.name
+%p
+	= 'email : '
+	= @user.email
+%p
+	= 'birthday : '
+	= @user.birthday
+= link_to 'Index', users_path
+= link_to 'Create this user again', "/create_fast?name=#{@user.name}&email=#{@user.email}"
