@@ -9,4 +9,5 @@
 	= 'birthday : '
 	= @user.birthday
 = link_to 'Index', users_path
-= link_to 'Create this user again', "/create_fast?name=#{@user.name}&email=#{@user.email}"
+/= link_to 'Create this user again', "/create_fast?name=#{@user.name}&email=#{@user.email}"
+= link_to 'Create this user again', create_fast_url(name: @user.name,email: @user.email)
