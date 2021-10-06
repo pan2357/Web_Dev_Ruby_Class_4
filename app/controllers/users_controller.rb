@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show edit update destroy ]
   before_action :set_post, only: %i[ edit_post edit_post_process delete_post]
-  
+
   # = before_action(:set_user, only: [:show, :edit, :update, :destroy])
   # before performing action in function show, edit, update, destroy
   # call function set_user
@@ -94,6 +94,8 @@ class UsersController < ApplicationController
     @post = Post.new(post_params)
     if @post.save
       redirect_to user_url(@post.user_id), notice: "Post created successfully"
+    else
+      redirect_to user_url(@post.user_id), notice: "Post not created"
     end
   end
 
@@ -103,6 +105,8 @@ class UsersController < ApplicationController
   def edit_post_process
     if @post.update(post_params)
       redirect_to user_url(@post.user_id), notice: "Post updated successfully"
+    else
+      redirect_to user_url(@post.user_id), notice: "Post not updated"
     end
   end
 
