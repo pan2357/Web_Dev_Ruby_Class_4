@@ -1,0 +1,48 @@
+%p#notice= notice 
+
+%p
+    %strong Email:
+    = @user.email
+
+%p
+    %strong Name:
+    = @user.name
+
+%p
+    %strong Birthday:
+    = @user.birthday
+
+%p
+    %strong Address:
+    = @user.address
+
+%p
+    %strong Postal code:
+    = @user.postal_code
+
+%p
+    %strong Pass:
+    = @user.pass
+
+= link_to 'Edit', edit_user_path(@user)
+-# |
+-# = link_to 'Back', users_path
+|
+= link_to 'Create new post', post_create_path(@user.id)
+
+-# always get syntax error with table, so haml is abandoned
+
+-# %table
+-#     %thead
+-#         %th Msg
+-#         %th Created at
+-#         %th Updated at
+-#         %th{:colspan => "2"}
+-#     %tbody
+-#         - @posts.each do |post|
+-#         %tr
+-#             %td= post.msg
+-#             %td= post.created_at
+-#             %td= post.updated_at
+-#             %td= link_to 'Edit', post_edit_url(@user.id,post.id)
+-#             %td= link_to 'Delete', post, method: :delete, data: { confirm: 'Are you sure?' }

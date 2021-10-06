@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show edit update destroy ]
+  before_action :set_post, only: %i[ edit_post edit_post_process delete_post]
+  
   # = before_action(:set_user, only: [:show, :edit, :update, :destroy])
   # before performing action in function show, edit, update, destroy
   # call function set_user
@@ -67,24 +69,64 @@ class UsersController < ApplicationController
   end
 
   def main
-    @user = User.find_by(params[:email])
-    pass = params[:pass]
-    respond_to do |format|
+  end
+
+  def login
+    @user = User.find_by(email: params[:email])
+    if @user == nil
+      redirect_to main_url, notice: "Email not existed"
+    else
+      pass = params[:pass]
       if @user.pass!=pass
-        format.html { redirect_to main, notice: "Password incorrect"}
+        redirect_to main_url, notice: "Email or Password incorrect"
+      else
+        redirect_to @user
       end
     end
+  end
+
+  def create_post
+    @post = Post.new
+    @post.user_id = params[:user_id]
+  end
+
+  def create_post_process
+    @post = Post.new(post_params)
+    if @post.save
+      redirect_to user_url(@post.user_id), notice: "Post created successfully"
+    end
+  end
+
+  def edit_post
+  end
+
+  def edit_post_process
+    if @post.update(post_params)
+      redirect_to user_url(@post.user_id), notice: "Post updated successfully"
+    end
+  end
+
+  def delete_post
+    @post.destroy
+    redirect_to user_url(params[:user_id]), notice: "Post deleted successfully"
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       @user = User.find(params[:id])
-      @posts = @user.posts
+    end
+
+    def set_post
+      @post = User.find(params[:user_id]).posts.find(params[:post_id])
     end
 
     # Only allow a list of trusted parameters through.
     def user_params
       params.require(:user).permit(:email, :name, :birthday, :address, :postal_code, :pass)
+    end
+
+    def post_params
+      params.require(:post).permit(:msg, :user_id)
     end
 end

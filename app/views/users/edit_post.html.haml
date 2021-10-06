@@ -1,0 +1,8 @@
+%h1 Edit Post
+= form_with(model: @post, url: post_edit_path(params[:user_id],@post.id)) do |form|
+  .field
+    = form.label :msg
+    = form.text_field :msg
+    = form.hidden_field :user_id
+  .actions
+    = form.submit "Update"
