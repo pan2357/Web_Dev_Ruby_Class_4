@@ -1,6 +1,9 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show edit update destroy ]
   before_action :set_post, only: %i[ edit_post edit_post_process delete_post]
+  before_action :logged_in, except: %i[ main login ]
+  before_action :check_id, only: %i[ show new edit create update destroy ]
+  before_action :check_user_id, only: %i[ create_post create_post_process edit_post edit_post_process delete_post ]
 
   # = before_action(:set_user, only: [:show, :edit, :update, :destroy])
   # before performing action in function show, edit, update, destroy
@@ -13,7 +16,11 @@ class UsersController < ApplicationController
 
   # GET /users/1 or /users/1.json
   def show
-    @posts = @user.posts
+    if logged_in
+      @posts = @user.posts
+    else
+      return
+    end
   end
 
   # GET /users/new
@@ -69,6 +76,7 @@ class UsersController < ApplicationController
   end
 
   def main
+    session[:user_id] = nil
   end
 
   def login
@@ -76,11 +84,11 @@ class UsersController < ApplicationController
     if @user == nil
       redirect_to main_url, notice: "Email not existed"
     else
-      pass = params[:pass]
-      if @user.pass!=pass
-        redirect_to main_url, notice: "Email or Password incorrect"
-      else
+      if @user.authenticate(params[:password])
         redirect_to @user
+        session[:user_id] = @user.id
+      else
+        redirect_to main_url, notice: "Email or Password incorrect"
       end
     end
   end
@@ -116,6 +124,30 @@ class UsersController < ApplicationController
   end
 
   private
+    def logged_in
+      if session[:user_id]
+        return true
+      else
+        redirect_to main_url, notice: "Please login"
+      end
+    end
+
+    def check_id
+      if session[:user_id]==params[:id].to_i
+        return true
+      else
+        redirect_to main_url, notice: "Please login with the correct account!"
+      end
+    end
+
+    def check_user_id
+      if session[:user_id]==params[:user_id].to_i
+        return true
+      else
+        redirect_to main_url, notice: "Do not mess with other people's post!"
+      end
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       @user = User.find(params[:id])
@@ -127,7 +159,7 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:email, :name, :birthday, :address, :postal_code, :pass)
+      params.require(:user).permit(:email, :name, :birthday, :address, :postal_code, :password)
     end
 
     def post_params

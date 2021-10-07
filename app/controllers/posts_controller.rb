@@ -17,33 +17,44 @@ class PostsController < ApplicationController
 
   # GET /posts/1/edit
   def edit
+    if session[:user_id]!=@post.user_id
+      redirect_to posts_url, notice: "Do not mess with other people's post!"
+    end
   end
 
   # POST /posts or /posts.json
   def create
-    @post = Post.new(post_params)
+    if session[:user_id]==post_params[:user_id].to_i
+      @post = Post.new(post_params)
 
-    respond_to do |format|
-      if @post.save
-        format.html { redirect_to @post, notice: "Post was successfully created." }
-        format.json { render :show, status: :created, location: @post }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @post.errors, status: :unprocessable_entity }
+      respond_to do |format|
+        if @post.save
+          format.html { redirect_to @post, notice: "Post was successfully created." }
+          format.json { render :show, status: :created, location: @post }
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @post.errors, status: :unprocessable_entity }
+        end
       end
+    else
+      redirect_to posts_url, notice: "Do not mess with other people's post!"
     end
   end
 
   # PATCH/PUT /posts/1 or /posts/1.json
   def update
-    respond_to do |format|
-      if @post.update(post_params)
-        format.html { redirect_to @post, notice: "Post was successfully updated." }
-        format.json { render :show, status: :ok, location: @post }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @post.errors, status: :unprocessable_entity }
+    if session[:user_id]==post_params[:user_id].to_i
+      respond_to do |format|
+        if @post.update(post_params)
+          format.html { redirect_to @post, notice: "Post was successfully updated." }
+          format.json { render :show, status: :ok, location: @post }
+        else
+          format.html { render :edit, status: :unprocessable_entity }
+          format.json { render json: @post.errors, status: :unprocessable_entity }
+        end
       end
+    else
+      redirect_to posts_url, notice: "Do not mess with other people's post!"
     end
   end
 

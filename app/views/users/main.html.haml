@@ -1,11 +1,11 @@
-%p#notice= notice  
+%p#notice= notice
 %h1 Login
 = form_with(model: @user) do |form|
   .field
     = form.label :email
     = form.text_field :email
   .field
-    = form.label :pass
-    = form.text_field :pass
+    = form.label :password
+    = form.password_field :password
   .actions
     = form.submit "Login"
