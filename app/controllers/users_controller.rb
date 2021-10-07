@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show edit update destroy ]
   before_action :set_post, only: %i[ edit_post edit_post_process delete_post]
-  before_action :logged_in, except: %i[ main login ]
-  before_action :check_id, only: %i[ show new edit create update destroy ]
+  before_action :logged_in, except: %i[ main login index new create ]
+  before_action :check_id, only: %i[ show edit update destroy ]
   before_action :check_user_id, only: %i[ create_post create_post_process edit_post edit_post_process delete_post ]
 
   # = before_action(:set_user, only: [:show, :edit, :update, :destroy])
